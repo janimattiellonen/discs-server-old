@@ -19,6 +19,7 @@ app.get('/discs', async (req, res, next) => {
 });
 
 app.get('/import', async (req, res, next) => {
+  const conn = await mysql.createConnection({host:'localhost', user: 'root', database: 'discs_db'});
 
   fs.readFile('./testdb-8e20_discs.json', 'UTF-8', (err, contents) => {
     JSON.parse(contents).map(row => {
@@ -26,21 +27,22 @@ app.get('/import', async (req, res, next) => {
       const disc = {
         name: row.name,
         type: row.type,
-        color: row.color,
-        material: row.material,
+        manufacturer : row.manufacturer,
+        color: row.color ? row.color : null,
+        material: row.material ? row.material : null,
         speed: row.speed,
         glide: row.glide,
         stability: row.stability,
         fade: row.fade,
-        weight: row.weight,
-        isMissing: row.missing,
-        missingDescription: row.missing_description,
-        isSold: row.sold,
-        isBroken: row.broken,
+        weight: row.weight ? row.weight : null,
+        isMissing: row.missing ? row.missing : false,
+        missingDescription: row.missing_description ? row.missing_description : null,
+        isSold: row.sold ? row.sold : false,
+        isBroken: row.broken ? row.broken : false,
         holeInOneAt: null,
-        isCollectionItem: row.collection_item,
+        isCollectionItem: row.collection_item ? row.collection_item : false,
         soldAt: null,
-        additional: row.additional,
+        additional: row.additional ? row.additional : null,
       };
 
       /*
@@ -64,7 +66,8 @@ app.get('/import', async (req, res, next) => {
           disc.additional
        */
 
-      discService.addDisc(disc);
+      discService.addDisc(conn, disc);
+      //throw "sss"
 
     });
 

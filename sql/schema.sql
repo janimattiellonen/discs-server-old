@@ -3,7 +3,7 @@ CREATE TABLE `disc` (
   `name` VARCHAR(32) NOT NULL,
   `type` VARCHAR (32) NOT NULL,
   `manufacturer` VARCHAR (128) NOT NULL,
-  `color` VARCHAR (32) DEFAULT NULL,
+  `color` VARCHAR (48) DEFAULT NULL,
   `material` VARCHAR (128) DEFAULT NULL,
   `speed` DECIMAL (10, 1) DEFAULT 0,
   `glide` DECIMAL (10, 1) DEFAULT 0,
