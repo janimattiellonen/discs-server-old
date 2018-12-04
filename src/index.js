@@ -1,81 +1,77 @@
 import express from "express";
 import cors from "cors";
 import bodyParser from "body-parser";
-import dotenv from "dotenv";
+import mysql from 'mysql2/promise';
+import fs from 'fs';
 
+import discService from './services/disc-service'
 
 const app = express();
 app.use(cors());
 app.use(bodyParser.json());
 
+app.get('/discs', async (req, res, next) => {
+    const conn = await mysql.createConnection({host:'localhost', user: 'root', database: 'discs_db'});
 
-app.get("/discs", async (req, res, next) => {
-  
-  res.json([
-    {
-      id: 1,
-      name: "Mako3",
-      type: 'midrange',
-      manufacturer: 'innova',
-      material: 'star',
-      weight: 175,
-      speed: 5,
-      glide: 5,
-      stability: 0,
-      fade: 0,
-      additional: null,
-      image: 'https://testdb-8e20.restdb.io/media/5babdf7981f9ca39000071f7',
-      isMissing: false,
-      missingDescription: null,
-      isSold: false,
-      soldAt: null,
-      isBroken: false,
-      holeInOneCount: 0,
-      isCollectionItem: false,
-    },
-    {
-      id: 2,
-      name: "Teebird",
-      type: 'fairwayDriver',
-      manufacturer: 'innova',
-      material: 'star',
-      weight: 167,
-      speed: 7,
-      glide: 5,
-      stability: 0,
-      fade: 2,
-      additional: null,
-      image: 'https://testdb-8e20.restdb.io/media/56d9dc47011d315d00004c35',
-      isMissing: false,
-      missingDescription: null,
-      isSold: false,
-      soldAt: null,
-      isBroken: false,
-      holeInOneCount: 0,
-      isCollectionItem: false,
-    },
-    {
-      id: 3,
-      name: "Teebird",
-      type: 'fairwayDriver',
-      manufacturer: 'innova',
-      material: 'star',
-      weight: 167,
-      speed: 7,
-      glide: 5,
-      stability: 0,
-      fade: 2,
-      additional: null,
-      image: 'https://testdb-8e20.restdb.io/media/5939739b639cc705000000da',
-      isMissing: false,
-      missingDescription: null,
-      isSold: false,
-      soldAt: null,
-      isBroken: false,
-      holeInOneCount: 0,
-      isCollectionItem: false,
-    }
-  ]);
+  discService.getDiscs(conn).then(
+      discs => res.json(discs.rows)
+  );
+});
+
+app.get('/import', async (req, res, next) => {
+
+  fs.readFile('./testdb-8e20_discs.json', 'UTF-8', (err, contents) => {
+    JSON.parse(contents).map(row => {
+
+      const disc = {
+        name: row.name,
+        type: row.type,
+        color: row.color,
+        material: row.material,
+        speed: row.speed,
+        glide: row.glide,
+        stability: row.stability,
+        fade: row.fade,
+        weight: row.weight,
+        isMissing: row.missing,
+        missingDescription: row.missing_description,
+        isSold: row.sold,
+        isBroken: row.broken,
+        holeInOneAt: null,
+        isCollectionItem: row.collection_item,
+        soldAt: null,
+        additional: row.additional,
+      };
+
+      /*
+          disc.name,
+          disc.type,
+          disc.manufacturer,
+          disc.color,
+          disc.material,
+          disc.speed,
+          disc.glide,
+          disc.stability,
+          disc.fade,
+          disc.weight,
+          disc.isMissing,
+          disc.missingDescription,
+          disc.isSold,
+          disc.isBroken,
+          disc.holeInOneAt,
+          disc.isCollectionItem,
+          disc.soldAt,
+          disc.additional
+       */
+
+      discService.addDisc(disc);
+
+    });
+
+    res.json({'ok': JSON.parse(contents)[0]});
+  })
+
+
 });
 
 app.listen(8889, () => {
