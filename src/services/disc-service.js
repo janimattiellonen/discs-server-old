@@ -57,8 +57,5 @@ export default {
               disc.additional
           ]
       );
-
-      console.log('result: ' + JSON.stringify(result));
-
     }
 }

@@ -1,6 +1,7 @@
 import express from "express";
 import cors from "cors";
 import bodyParser from "body-parser";
+import moment from 'moment';
 import mysql from 'mysql2/promise';
 import fs from 'fs';
 
@@ -11,10 +12,11 @@ app.use(cors());
 app.use(bodyParser.json());
 
 app.get('/discs', async (req, res, next) => {
-    const conn = await mysql.createConnection({host:'localhost', user: 'root', database: 'discs_db'});
+  const conn = await mysql.createConnection({host:'localhost', user: 'root', database: 'discs_db'});
 
+  console.log(moment('2018-10-11T19:53:00.096Z').format('YYYY-MM-DD HH:mm:ss'));
   discService.getDiscs(conn).then(
-      discs => res.json(discs.rows)
+    discs => res.json(discs.rows)
   );
 });
 
@@ -39,9 +41,9 @@ app.get('/import', async (req, res, next) => {
         missingDescription: row.missing_description ? row.missing_description : null,
         isSold: row.sold ? row.sold : false,
         isBroken: row.broken ? row.broken : false,
-        holeInOneAt: null,
+        holeInOneAt: row['HIO date'] ? moment(row['HIO date']).format('YYYY-MM-DD HH:mm:ss') : null,
         isCollectionItem: row.collection_item ? row.collection_item : false,
-        soldAt: null,
+        soldAt: row.sold_at ? moment(row.sold_at).format('YYYY-MM-DD HH:mm:ss') : null,
         additional: row.additional ? row.additional : null,
       };
 
