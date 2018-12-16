@@ -33,9 +33,10 @@ export default {
               hole_in_one_at,
               is_collection_item,
               sold_at,
-              additional
+              additional,
+              image_url
           )
-          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
           [
               disc.name,
               disc.type,
@@ -54,7 +55,8 @@ export default {
               disc.holeInOneAt,
               disc.isCollectionItem,
               disc.soldAt,
-              disc.additional
+              disc.additional,
+              disc.imageUrl
           ]
       );
     }

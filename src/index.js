@@ -45,6 +45,7 @@ app.get('/import', async (req, res, next) => {
         isCollectionItem: row.collection_item ? row.collection_item : false,
         soldAt: row.sold_at ? moment(row.sold_at).format('YYYY-MM-DD HH:mm:ss') : null,
         additional: row.additional ? row.additional : null,
+        imageUrl: row.image && row.image[0] ? row.image[0] : null,
       };
 
       /*
