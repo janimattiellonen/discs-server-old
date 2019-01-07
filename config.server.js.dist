@@ -1,8 +1,6 @@
 
 module.exports = {
-  db: {
-    username: 'root',
-    host: 'localhost',
-    password: null,
+  restdb: {
+      	api_key: ''
   }
 };

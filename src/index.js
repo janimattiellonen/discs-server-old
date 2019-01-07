@@ -1,83 +1,27 @@
+import axios from 'axios';
 import express from "express";
 import cors from "cors";
 import bodyParser from "body-parser";
 import moment from 'moment';
-import mysql from 'mysql2/promise';
 import fs from 'fs';
 
-import discService from './services/disc-service'
+import config from '../config.server';
 
 const app = express();
 app.use(cors());
 app.use(bodyParser.json());
 
+const getAuthorizationHeaders = () => {
+  return {
+    headers: {
+      'x-apikey': config.restdb.api_key
+    }
+  };
+};
+
 app.get('/discs', async (req, res, next) => {
-  const conn = await mysql.createConnection({host:'localhost', user: 'root', database: 'discs_db'});
-
-  console.log(moment('2018-10-11T19:53:00.096Z').format('YYYY-MM-DD HH:mm:ss'));
-  discService.getDiscs(conn).then(
-    discs => res.json(discs.rows)
-  );
-});
-
-app.get('/import', async (req, res, next) => {
-  const conn = await mysql.createConnection({host:'localhost', user: 'root', database: 'discs_db'});
-
-  fs.readFile('./testdb-8e20_discs.json', 'UTF-8', (err, contents) => {
-    JSON.parse(contents).map(row => {
-
-      const disc = {
-        name: row.name,
-        type: row.type,
-        manufacturer : row.manufacturer,
-        color: row.color ? row.color : null,
-        material: row.material ? row.material : null,
-        speed: row.speed,
-        glide: row.glide,
-        stability: row.stability,
-        fade: row.fade,
-        weight: row.weight ? row.weight : null,
-        isMissing: row.missing ? row.missing : false,
-        missingDescription: row.missing_description ? row.missing_description : null,
-        isSold: row.sold ? row.sold : false,
-        isBroken: row.broken ? row.broken : false,
-        holeInOneAt: row['HIO date'] ? moment(row['HIO date']).format('YYYY-MM-DD HH:mm:ss') : null,
-        isCollectionItem: row.collection_item ? row.collection_item : false,
-        soldAt: row.sold_at ? moment(row.sold_at).format('YYYY-MM-DD HH:mm:ss') : null,
-        additional: row.additional ? row.additional : null,
-        imageUrl: row.image && row.image[0] ? row.image[0] : null,
-      };
-
-      /*
-          disc.name,
-          disc.type,
-          disc.manufacturer,
-          disc.color,
-          disc.material,
-          disc.speed,
-          disc.glide,
-          disc.stability,
-          disc.fade,
-          disc.weight,
-          disc.isMissing,
-          disc.missingDescription,
-          disc.isSold,
-          disc.isBroken,
-          disc.holeInOneAt,
-          disc.isCollectionItem,
-          disc.soldAt,
-          disc.additional
-       */
-
-      discService.addDisc(conn, disc);
-      //throw "sss"
-
-    });
-
-    res.json({'ok': JSON.parse(contents)[0]});
-  })
-
-
+  axios.get('https://testdb-8e20.restdb.io/rest/discs', getAuthorizationHeaders())
+    .then(response => res.status(200).json(response.data));
 });
 
 app.listen(8889, () => {
