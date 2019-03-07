@@ -20,7 +20,7 @@ const getAuthorizationHeaders = () => {
 };
 
 app.get('/api/discs', async (req, res, next) => {
-  axios.get('https://testdb-8e20.restdb.io/rest/discs', getAuthorizationHeaders())
+  axios.get('https://testdb-8e20.restdb.io/rest/discs?metafields=true', getAuthorizationHeaders())
     .then(response => res.status(200).json(response.data));
 });
 
