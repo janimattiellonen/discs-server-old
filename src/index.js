@@ -24,6 +24,6 @@ app.get('/api/discs', async (req, res, next) => {
     .then(response => res.status(200).json(response.data));
 });
 
-app.listen(8889, () => {
-  console.log(`Listening on port 8889`);
+app.listen(8679, () => {
+  console.log(`Listening on port 8679`);
 });
